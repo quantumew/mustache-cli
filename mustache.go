@@ -13,7 +13,7 @@ import (
 func main() {
 	doc := `mustache
         Usage:
-            mustache <data-path> <template-path>
+            mustache <template-path> <data-path>...
 
         Options:
             -h --help        Show this message.
@@ -23,18 +23,33 @@ func main() {
             <template-path>  Path to template file.
     `
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	filePath := arguments["<data-path>"].(string)
+	filePathMap := arguments["<data-path>"].([]string)
 	templatePath := arguments["<template-path>"].(string)
+	data := make(map[string]interface{})
+
+	for _, path := range filePathMap {
+		json, err := loadJson(path)
+		jsonMap := json.(map[string]interface{})
+		handleError(err)
+
+		for key, val := range jsonMap {
+			data[key] = val
+		}
+	}
+
+	output, err := mustache.RenderFile(templatePath, data)
+	handleError(err)
+	fmt.Println(output)
+}
+
+func loadJson(filePath string) (interface{}, error) {
 	raw, err := ioutil.ReadFile(filePath)
 	handleError(err)
 
 	var data interface{}
 	err = json.Unmarshal(raw, &data)
-	handleError(err)
 
-	output, err := mustache.RenderFile(templatePath, data)
-	handleError(err)
-	fmt.Println(output)
+	return data, err
 }
 
 func handleError(err interface{}) {
