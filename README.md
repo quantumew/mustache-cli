@@ -9,7 +9,7 @@ See examples directory for a more in depth example of using JSON, YAML, and stdi
 
 Installation:
 
-    go get github.com/quantumew/mustache-cli && make
+    go get -d github.com/quantumew/mustache-cli && cd $GOPATH/src/github.com/quantumew/mustache-cli && make
 
 Usage:
 
