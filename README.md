@@ -7,9 +7,9 @@ Works with YAML and JSON. Data can be piped in via stdin or passed in as a file 
 
 See examples directory for a more in depth example of using JSON, YAML, and stdin.
 
-Installation:
+Compiling:
 
-    go get -d github.com/quantumew/mustache-cli && cd $GOPATH/src/github.com/quantumew/mustache-cli && make
+    git clone git@github.com:quantumew/mustache-cli.git && cd mustache-cli && make
 
 Usage:
 
