@@ -7,9 +7,13 @@ Works with YAML and JSON. Data can be piped in via stdin or passed in as a file 
 
 See examples directory for a more in depth example of using JSON, YAML, and stdin.
 
+Installation:
+
+    go get github.com/quantumew/mustache-cli && make
+
 Usage:
 
-	mustache.go <template-path> [options]
+	mustache <template-path> [options]
 
 Options:
 
@@ -23,8 +27,8 @@ Arguments:
 
 Examples:
 
-	mustache.go template.mustache --data data-source.json
+	mustache template.mustache --data data-source.json
 
-	mustache.go template.mustache --data data-source.yaml
+	mustache template.mustache --data data-source.yaml
 
-	cat data-source.json | mustache.go template.mustache
+	cat data-source.json | mustache template.mustache

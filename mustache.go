@@ -19,7 +19,7 @@ func main() {
         via stdin. If data option is given that will be used.
 
         Usage:
-            mustache.go <template-path> [options]
+            mustache <template-path> [options]
 
         Options:
             -d --data FILE   Path to data to use in template.
