@@ -12,10 +12,11 @@ import (
 )
 
 func main() {
-	doc := `mustache-cli
+	doc := `Mustache Cli
 
         Command line interface for rendering mustache templates.
-        If not data path is given it will expect data from stdin.
+        Data is either expected via data option with a file name or
+        via stdin. If data option is given that will be used.
 
         Usage:
             mustache.go <template-path> [options]
