@@ -2,7 +2,7 @@ Mustache Cli
 ============
 
 Command line interface to mustache template engine in Go.
-Basically a simple CLI wrapper for (cbroglie/go-mustache)[https://github.com/cbroglie/go-mustache].
+Basically a simple CLI wrapper for [cbroglie/go-mustache](https://github.com/cbroglie/go-mustache).
 Works with YAML and JSON. Data can be piped in via stdin or passed in as a file name via an option.
 
 Usage:
