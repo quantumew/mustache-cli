@@ -6,14 +6,19 @@ import (
 	"fmt"
 	"github.com/cbroglie/mustache"
 	"github.com/docopt/docopt-go"
+	"github.com/ghodss/yaml"
 	"io/ioutil"
 	"os"
 )
 
 func main() {
-	doc := `mustache
+	doc := `mustache-cli
+
+        Command line interface for rendering mustache templates.
+        If not data path is given it will expect data from stdin.
+
         Usage:
-            mustache <template-path> <data-path>...
+            mustache.go [<data-path>] <template-path>
 
         Options:
             -h --help        Show this message.
@@ -23,31 +28,44 @@ func main() {
             <template-path>  Path to template file.
     `
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	filePathMap := arguments["<data-path>"].([]string)
+	dataPath := arguments["<data-path>"].(string)
 	templatePath := arguments["<template-path>"].(string)
-	data := make(map[string]interface{})
 
-	for _, path := range filePathMap {
-		json, err := loadJson(path)
-		jsonMap := json.(map[string]interface{})
-		handleError(err)
+	var data interface{}
+	var err error
+	data, err = loadJson(dataPath)
 
-		for key, val := range jsonMap {
-			data[key] = val
-		}
+	if err != nil {
+		data, err = loadYaml(dataPath)
 	}
+	handleError(err)
 
 	output, err := mustache.RenderFile(templatePath, data)
 	handleError(err)
 	fmt.Println(output)
 }
 
-func loadJson(filePath string) (interface{}, error) {
+func readFromFile(filePath string) []byte {
 	raw, err := ioutil.ReadFile(filePath)
 	handleError(err)
 
+	return raw
+}
+
+func loadYaml(filePath string) (interface{}, error) {
+	raw := readFromFile(filePath)
+
 	var data interface{}
-	err = json.Unmarshal(raw, &data)
+	err := yaml.Unmarshal(raw, &data)
+
+	return data, err
+}
+
+func loadJson(filePath string) (interface{}, error) {
+	raw := readFromFile(filePath)
+
+	var data interface{}
+	err := json.Unmarshal(raw, &data)
 
 	return data, err
 }
