@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
-(
-    cd "${0%/*}"
-    ../mustache.go template.mustache --data data-source.json > output.txt
-)
+cd "${0%/*}"
+../mustache.go template.mustache --data data-source.json > output.txt

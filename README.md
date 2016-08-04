@@ -27,4 +27,4 @@ Examples:
 
 	mustache.go template.mustache --data data-source.yaml
 
-	jq '.' data-source.json | mustache.go template.mustache
+	cat data-source.json | mustache.go template.mustache
