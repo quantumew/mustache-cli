@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+(
+    cd "${0%/*}"
+    jq '.' data-source.json | ../mustache.go template.mustache > output.txt
+)

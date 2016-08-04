@@ -2,5 +2,5 @@
 
 (
     cd "${0%/*}"
-    ../mustache.go data-source.json template.mustache > output.txt
+    ../mustache.go template.mustache --data data-source.json > output.txt
 )

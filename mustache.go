@@ -18,25 +18,37 @@ func main() {
         If not data path is given it will expect data from stdin.
 
         Usage:
-            mustache.go [<data-path>] <template-path>
+            mustache.go <template-path> [options]
 
         Options:
+            -d --data FILE   Path to data to use in template.
+
             -h --help        Show this message.
 
         Arguments:
-            <data-path>      Path to data file to populate template.
             <template-path>  Path to template file.
     `
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	dataPath := arguments["<data-path>"].(string)
+	dataPath := arguments["--data"]
 	templatePath := arguments["<template-path>"].(string)
+
+	var readErr error
+	var raw []byte
+
+	if dataPath == nil {
+		raw, readErr = ioutil.ReadAll(os.Stdin)
+	} else {
+		path := dataPath.(string)
+		raw, readErr = ioutil.ReadFile(path)
+	}
+	handleError(readErr)
 
 	var data interface{}
 	var err error
-	data, err = loadJson(dataPath)
+	data, err = loadJson(raw)
 
 	if err != nil {
-		data, err = loadYaml(dataPath)
+		data, err = loadYaml(raw)
 	}
 	handleError(err)
 
@@ -45,25 +57,14 @@ func main() {
 	fmt.Println(output)
 }
 
-func readFromFile(filePath string) []byte {
-	raw, err := ioutil.ReadFile(filePath)
-	handleError(err)
-
-	return raw
-}
-
-func loadYaml(filePath string) (interface{}, error) {
-	raw := readFromFile(filePath)
-
+func loadYaml(raw []byte) (interface{}, error) {
 	var data interface{}
 	err := yaml.Unmarshal(raw, &data)
 
 	return data, err
 }
 
-func loadJson(filePath string) (interface{}, error) {
-	raw := readFromFile(filePath)
-
+func loadJson(raw []byte) (interface{}, error) {
 	var data interface{}
 	err := json.Unmarshal(raw, &data)
 
