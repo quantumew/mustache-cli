@@ -2,5 +2,5 @@
 
 (
     cd "${0%/*}"
-    jq '.' data-source.json | ../mustache.go template.mustache > output.txt
+    cat data-source.json | ../mustache.go template.mustache > output.txt
 )
