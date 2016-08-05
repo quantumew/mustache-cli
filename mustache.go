@@ -8,8 +8,25 @@ import (
 	"github.com/docopt/docopt-go"
 	"github.com/ghodss/yaml"
 	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 )
+
+type EncodingError struct {
+	msg         string
+	ChildErrors []error
+}
+
+func (e *EncodingError) Error() string {
+	message := e.msg
+
+	for _, err := range e.ChildErrors {
+		message += "\nChild Error: " + err.Error()
+	}
+
+	return message
+}
 
 func main() {
 	doc := `Mustache Cli
@@ -33,30 +50,77 @@ func main() {
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
 	dataPath := arguments["<data-file>"]
 	templatePath := arguments["<template-path>"].(string)
-
-	var readErr error
-	var raw []byte
+	var err error
+	var data interface{}
 
 	if dataPath == nil {
-		raw, readErr = ioutil.ReadAll(os.Stdin)
+		data, err = loadFromStdin()
 	} else {
 		path := dataPath.(string)
-		raw, readErr = ioutil.ReadFile(path)
+		data, err = loadFromFile(path)
 	}
-	handleError(readErr)
-
-	var data interface{}
-	var err error
-	data, err = loadJson(raw)
 
 	if err != nil {
-		data, err = loadYaml(raw)
+		logError("Error occurred loading data", err)
+		os.Exit(1)
 	}
-	handleError(err)
 
 	output, err := mustache.RenderFile(templatePath, data)
-	handleError(err)
+
+	if err != nil {
+		logError("Error occurred rendering template", err)
+	}
 	fmt.Println(output)
+}
+
+func loadFromFile(path string) (interface{}, error) {
+	var data interface{}
+	var err error
+
+	ext := filepath.Ext(path)
+	raw, readErr := ioutil.ReadFile(path)
+
+	if readErr != nil {
+		return nil, readErr
+	}
+
+	if ext == "yaml" || ext == "yml" {
+		data, err = loadYaml(raw)
+	} else if ext == "json" {
+		data, err = loadJson(raw)
+	} else {
+		data, err = loadUnknown(raw)
+	}
+
+	return data, err
+}
+
+func loadFromStdin() (interface{}, error) {
+	raw, readErr := ioutil.ReadAll(os.Stdin)
+
+	if readErr != nil {
+		return nil, readErr
+	}
+
+	return loadUnknown(raw)
+}
+
+func loadUnknown(raw []byte) (interface{}, error) {
+	var jsonErr error
+	var yamlErr error
+	var err error
+
+	data, jsonErr := loadJson(raw)
+
+	if jsonErr != nil {
+		data, yamlErr = loadYaml(raw)
+
+		if yamlErr != nil {
+			err = &EncodingError{msg: "Could not decode provided data.", ChildErrors: []error{jsonErr, yamlErr}}
+		}
+	}
+
+	return data, err
 }
 
 func loadYaml(raw []byte) (interface{}, error) {
@@ -73,9 +137,8 @@ func loadJson(raw []byte) (interface{}, error) {
 	return data, err
 }
 
-func handleError(err interface{}) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func logError(msg string, err error) {
+	log := log.New(os.Stderr, "", 0)
+	log.Println(msg)
+	log.Println(err.Error())
 }
