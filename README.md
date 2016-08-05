@@ -13,22 +13,22 @@ Compiling:
 
 Usage:
 
-	mustache <template-path> [options]
+    mustache [<data-file>] <template-path>
+    mustache <template-path>
 
 Options:
 
-	-d --data FILE   - Path to data to use in template.
-
-	-h --help        - Show this message.
+    -h --help        - Show this message.
 
 Arguments:
+    <data-file>      - Path to data file.
 
-	<template-path>  - Path to template file.
+    <template-path>  - Path to template file.
 
 Examples:
 
-	mustache template.mustache --data data-source.json
+    mustache data-source.json template.mustache
 
-	mustache template.mustache --data data-source.yaml
+    mustache data-source.yaml template.mustache
 
-	cat data-source.json | mustache template.mustache
+    cat data-source.json | mustache template.mustache

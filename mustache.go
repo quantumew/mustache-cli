@@ -19,18 +19,19 @@ func main() {
         via stdin. If data option is given that will be used.
 
         Usage:
-            mustache <template-path> [options]
+            mustache [<data-file>] <template-path>
+            mustache <template-path>
 
         Options:
-            -d --data FILE   Path to data to use in template.
-
             -h --help        Show this message.
 
         Arguments:
+            <data-file>      Path to data file.
+
             <template-path>  Path to template file.
     `
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	dataPath := arguments["--data"]
+	dataPath := arguments["<data-file>"]
 	templatePath := arguments["<template-path>"].(string)
 
 	var readErr error

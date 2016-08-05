@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 cd "${0%/*}"
-../mustache.go template.mustache --data data-source.yaml > output.txt
+../mustache.go data-source.yaml template.mustache > output.txt
