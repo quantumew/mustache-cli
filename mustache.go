@@ -13,12 +13,12 @@ import (
 	"path/filepath"
 )
 
-type EncodingError struct {
+type UnknownEncodingError struct {
 	msg         string
 	ChildErrors []error
 }
 
-func (e *EncodingError) Error() string {
+func (e *UnknownEncodingError) Error() string {
 	message := e.msg
 
 	for _, err := range e.ChildErrors {
@@ -116,7 +116,7 @@ func loadUnknown(raw []byte) (interface{}, error) {
 		data, yamlErr = loadYaml(raw)
 
 		if yamlErr != nil {
-			err = &EncodingError{msg: "Could not decode provided data.", ChildErrors: []error{jsonErr, yamlErr}}
+			err = &UnknownEncodingError{msg: "Could not decode provided data.", ChildErrors: []error{jsonErr, yamlErr}}
 		}
 	}
 
