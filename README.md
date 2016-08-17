@@ -9,7 +9,7 @@ Works with YAML and JSON. Data can be piped in via stdin or passed in as a file 
 
 See examples directory for a more in depth example of using JSON, YAML, and stdin.
 
-[Build of latest release.](https://github.com/quantumew/mustache-cli/releases/download/v0.2/mustache)
+[Build of latest release.](https://github.com/quantumew/mustache-cli/releases)
 
 Usage:
 
