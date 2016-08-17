@@ -6,6 +6,7 @@ import (
     "github.com/onsi/gomega/gexec"
     "github.com/onsi/gomega/gbytes"
     "os/exec"
+    "time"
 )
 
 var _ = Describe("Mustache", func() {
@@ -19,8 +20,9 @@ var _ = Describe("Mustache", func() {
         command := exec.Command(path)
         session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
         Expect(err).ShouldNot(HaveOccurred())
-        Eventually(session.Out).Should(gbytes.Say(expectedTemplate))
-        Eventually(session).Should(gexec.Exit(0))
+        session.Wait(5 * time.Second)
+        Expect(session.Out).Should(gbytes.Say(expectedTemplate))
+        Expect(session).Should(gexec.Exit(0))
     }
 
     Describe("When Cli is executed", func() {
