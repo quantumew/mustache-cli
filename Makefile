@@ -2,7 +2,7 @@
 
 SOURCE := mustache.go
 BINARY=mustache
-VERSION=0.1
+VERSION=0.2
 BUILD_TIME=`date +%FT%T%z`
 DEPS = $(go list -f '{{range .Imports}}{{.}} {{end}}' ./...)
 
