@@ -9,45 +9,34 @@ import (
 )
 
 var _ = Describe("Mustache", func() {
-    var (
-        successDecodeOutput map[string]interface{}
-        expectedTemplate string
-    )
+    successDecodeOutput := map[string]interface{}{"key":"val"}
+    expectedTemplate := "my name is Montoooorb69 but you can call me Monica Rachel Pheobe.\n" +
+        "I come from Cloooooooooooooooo in the Florbatorb galaxy.\n" +
+        "I would like to Drink earth liquids, Kill the producers of 3rd Rock From The Sun, Go to Disney World.\n\n" +
+        "Thank you,\nMontoooorb69"
 
-    BeforeEach(func() {
-        successDecodeOutput = map[string]interface{}{"key":"val"}
-        expectedTemplate = "my name is Montoooorb69 but you can call me Monica Rachel Pheobe.\n" +
-            "I come from Cloooooooooooooooo in the Florbatorb galaxy.\n" +
-            "I would like to Drink earth liquids, Kill the producers of 3rd Rock From The Sun, Go to Disney World.\n\n" +
-            "Thank you,\nMontoooorb69"
-    })
+    assertExampleSuccess := func(path string) {
+        command := exec.Command(path)
+        session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+        Expect(err).ShouldNot(HaveOccurred())
+        Eventually(session.Out).Should(gbytes.Say(expectedTemplate))
+        Eventually(session).Should(gexec.Exit(0))
+    }
 
     Describe("Cli", func() {
         Context("With data file", func() {
             It("should successfully output example template from JSON data source", func() {
-                command := exec.Command("./examples/run-example-json")
-                session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-                Expect(err).ShouldNot(HaveOccurred())
-                Eventually(session.Out).Should(gbytes.Say(expectedTemplate))
-                Eventually(session).Should(gexec.Exit(0))
+                assertExampleSuccess("./examples/run-example-json")
             })
 
             It("should successfully output example template from YAML data source", func() {
-                command := exec.Command("./examples/run-example-yaml")
-                session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-                Expect(err).ShouldNot(HaveOccurred())
-                Eventually(session.Out).Should(gbytes.Say(expectedTemplate))
-                Eventually(session).Should(gexec.Exit(0))
+                assertExampleSuccess("./examples/run-example-yaml")
             })
         })
 
         Context("From Stdin", func() {
             It("should successfully output example template", func() {
-                command := exec.Command("./examples/run-example-stdin")
-                session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-                Expect(err).ShouldNot(HaveOccurred())
-                Eventually(session.Out).Should(gbytes.Say(expectedTemplate))
-                Eventually(session).Should(gexec.Exit(0))
+                assertExampleSuccess("./examples/run-example-stdin")
             })
         })
     })
