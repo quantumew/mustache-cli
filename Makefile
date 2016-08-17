@@ -9,9 +9,14 @@ DEPS = $(go list -f '{{range .Imports}}{{.}} {{end}}' ./...)
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCE)
-	echo $(DEPS) | xargs -n1 go get -d
+	$(MAKE) get-deps
 	go build -o ${BINARY} ${SOURCE}
 	strip --strip-unneeded mustache
+
+get-deps:
+	echo $(DEPS) | xargs -n1 go get -d
+	go get -d "github.com/onsi/gomega"
+	go get -d "github.com/onsi/ginkgo"
 
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi

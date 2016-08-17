@@ -9,5 +9,5 @@ go:
     - 1.1
     - 1.0
     - tip
-install: go get
+install: make get-deps
 script: go test ./...
