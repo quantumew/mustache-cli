@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	doc := `Mustache Cli
+    doc := `Mustache Cli
 
         Command line interface for rendering mustache templates.
         Data is either expected via data option with a file name or
@@ -30,53 +30,54 @@ func main() {
 
             <template-path>  Path to template file.
     `
-	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	dataPath := arguments["<data-file>"]
-	templatePath := arguments["<template-path>"].(string)
-	var (
+    arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
+    dataPath := arguments["<data-file>"]
+    templatePath := arguments["<template-path>"].(string)
+
+    var (
         err error
-	    data interface{}
+        data interface{}
     )
 
-	if dataPath == nil {
-		data, err = loadFromStdin()
-	} else {
-		path := dataPath.(string)
-		data, err = loadFromFile(path)
-	}
+    if dataPath == nil {
+        data, err = loadFromStdin()
+    } else {
+        path := dataPath.(string)
+        data, err = loadFromFile(path)
+    }
 
-	if err != nil {
-		logError("Error occurred loading data", err)
-		os.Exit(1)
-	}
+    if err != nil {
+        logError("Error occurred loading data", err)
+        os.Exit(1)
+    }
 
-	output, err := mustache.RenderFile(templatePath, data)
+    output, err := mustache.RenderFile(templatePath, data)
 
-	if err != nil {
-		logError("Error occurred rendering template", err)
-	}
+    if err != nil {
+        logError("Error occurred rendering template", err)
+    }
 
-	fmt.Println(output)
+    fmt.Println(output)
 }
 
 func loadFromFile(path string) (interface{}, error) {
-	raw, readErr := ioutil.ReadFile(path)
+    raw, readErr := ioutil.ReadFile(path)
 
-	if readErr != nil {
-		return nil, readErr
-	}
+    if readErr != nil {
+        return nil, readErr
+    }
 
     return decodeData(raw)
 }
 
 func loadFromStdin() (interface{}, error) {
-	raw, readErr := ioutil.ReadAll(os.Stdin)
+    raw, readErr := ioutil.ReadAll(os.Stdin)
 
-	if readErr != nil {
-		return nil, readErr
-	}
+    if readErr != nil {
+        return nil, readErr
+    }
 
-	return decodeData(raw)
+    return decodeData(raw)
 }
 
 func decodeData(raw []byte) (interface{}, error) {
@@ -87,7 +88,7 @@ func decodeData(raw []byte) (interface{}, error) {
 }
 
 func logError(msg string, err error) {
-	log := log.New(os.Stderr, "", 0)
-	log.Println(msg)
-	log.Println(err.Error())
+    log := log.New(os.Stderr, "", 0)
+    log.Println(msg)
+    log.Println(err.Error())
 }
