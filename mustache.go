@@ -57,6 +57,7 @@ func main() {
 
     if err != nil {
         logError("Error occurred rendering template", err)
+        os.Exit(1)
     }
 
     fmt.Println(output)
