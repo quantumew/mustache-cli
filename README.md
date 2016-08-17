@@ -30,3 +30,5 @@ Examples:
     mustache data-source.yaml template.mustache
 
     cat data-source.json | mustache template.mustache
+
+See also: [EXAMPLES](examples/README.md)
