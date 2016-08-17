@@ -7,28 +7,28 @@ Works with YAML and JSON. Data can be piped in via stdin or passed in as a file 
 
 See examples directory for a more in depth example of using JSON, YAML, and stdin.
 
-Compiling:
-
-    git clone git@github.com:quantumew/mustache-cli.git && cd mustache-cli && make
+[Build of latest release.](https://github.com/quantumew/mustache-cli/releases/download/v0.2/mustache)
 
 Usage:
 
-	mustache <template-path> [options]
+    mustache [<data-file>] <template-path>
+    mustache <template-path>
 
 Options:
 
-	-d --data FILE   - Path to data to use in template.
-
-	-h --help        - Show this message.
+    -h --help        - Show this message.
 
 Arguments:
+    <data-file>      - Path to data file.
 
-	<template-path>  - Path to template file.
+    <template-path>  - Path to template file.
 
 Examples:
 
-	mustache template.mustache --data data-source.json
+    mustache data-source.json template.mustache
 
-	mustache template.mustache --data data-source.yaml
+    mustache data-source.yaml template.mustache
 
-	cat data-source.json | mustache template.mustache
+    cat data-source.json | mustache template.mustache
+
+See also: [EXAMPLES](examples/README.md)

@@ -2,79 +2,95 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/cbroglie/mustache"
 	"github.com/docopt/docopt-go"
 	"github.com/ghodss/yaml"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
+var logger = log.New(os.Stderr, "", 0)
+
 func main() {
-	doc := `Mustache Cli
+    doc := `Mustache Cli
 
         Command line interface for rendering mustache templates.
         Data is either expected via data option with a file name or
         via stdin. If data option is given that will be used.
 
         Usage:
-            mustache <template-path> [options]
+            mustache [<data-file>] <template-path>
+            mustache <template-path>
 
         Options:
-            -d --data FILE   Path to data to use in template.
-
             -h --help        Show this message.
 
         Arguments:
+            <data-file>      Path to data file.
+
             <template-path>  Path to template file.
     `
-	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
-	dataPath := arguments["--data"]
-	templatePath := arguments["<template-path>"].(string)
+    arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
+    dataPath := arguments["<data-file>"]
+    templatePath := arguments["<template-path>"].(string)
 
-	var readErr error
-	var raw []byte
+    var (
+        err error
+        data interface{}
+    )
 
-	if dataPath == nil {
-		raw, readErr = ioutil.ReadAll(os.Stdin)
-	} else {
-		path := dataPath.(string)
-		raw, readErr = ioutil.ReadFile(path)
-	}
-	handleError(readErr)
+    if dataPath == nil {
+        data, err = loadFromStdin()
+    } else {
+        path := dataPath.(string)
+        data, err = loadFromFile(path)
+    }
 
-	var data interface{}
-	var err error
-	data, err = loadJson(raw)
+    if err != nil {
+        logError("Error occurred loading data", err)
+        os.Exit(1)
+    }
 
-	if err != nil {
-		data, err = loadYaml(raw)
-	}
-	handleError(err)
+    output, err := mustache.RenderFile(templatePath, data)
 
-	output, err := mustache.RenderFile(templatePath, data)
-	handleError(err)
-	fmt.Println(output)
+    if err != nil {
+        logError("Error occurred rendering template", err)
+        os.Exit(1)
+    }
+
+    fmt.Println(output)
 }
 
-func loadYaml(raw []byte) (interface{}, error) {
+func loadFromFile(path string) (interface{}, error) {
+    raw, readErr := ioutil.ReadFile(path)
+
+    if readErr != nil {
+        return nil, readErr
+    }
+
+    return decodeData(raw)
+}
+
+func loadFromStdin() (interface{}, error) {
+    raw, readErr := ioutil.ReadAll(os.Stdin)
+
+    if readErr != nil {
+        return nil, readErr
+    }
+
+    return decodeData(raw)
+}
+
+func decodeData(raw []byte) (interface{}, error) {
 	var data interface{}
 	err := yaml.Unmarshal(raw, &data)
 
 	return data, err
 }
 
-func loadJson(raw []byte) (interface{}, error) {
-	var data interface{}
-	err := json.Unmarshal(raw, &data)
-
-	return data, err
-}
-
-func handleError(err interface{}) {
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+func logError(msg string, err error) {
+    logger.Println(msg)
+    logger.Println(err.Error())
 }

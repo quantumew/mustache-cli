@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-
+# Example of running mustache with a JSON data source.
+# NOTE: This script is used as part of the mustache-cli unit tests.
 cd "${0%/*}"
-../mustache.go template.mustache --data data-source.json > output.txt
+../mustache.go data-source.json template.mustache
