@@ -23,7 +23,8 @@ var _ = Describe("Mustache", func() {
         Eventually(session).Should(gexec.Exit(0))
     }
 
-    Describe("Cli", func() {
+    Describe("When Cli is executed", func() {
+        // These tests leverage the example scripts for ease of testing.
         Context("With data file", func() {
             It("should successfully output example template from JSON data source", func() {
                 assertExampleSuccess("./examples/run-example-json")
@@ -41,14 +42,16 @@ var _ = Describe("Mustache", func() {
         })
     })
 
-    Describe("Testing mustache decode data", func() {
-        Context("Decode data with valid data", func() {
+    Describe("decodeData", func() {
+        Context("When called with valid JSON data", func() {
             It("should decode JSON to a map", func() {
                 json := []byte("{ \"key\": \"val\"}")
                 data, _ := decodeData(json)
                 Expect(data).To(Equal(successDecodeOutput))
             })
+        })
 
+        Context("When called with valid Yaml data", func() {
             It("Should decode YAML to a map", func() {
                 input := []byte("key: val")
                 data, _ := decodeData(input)
@@ -56,7 +59,7 @@ var _ = Describe("Mustache", func() {
             })
         })
 
-        Context("Decoding data with invalid format", func() {
+        Context("When called with data in invalid format", func() {
             It("should fail to load malformatted JSON", func() {
                 json := []byte("{ \"key\": %val%\"}")
                 _, err := decodeData(json)

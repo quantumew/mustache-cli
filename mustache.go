@@ -11,6 +11,8 @@ import (
 	"os"
 )
 
+var logger = log.New(os.Stderr, "", 0)
+
 func main() {
     doc := `Mustache Cli
 
@@ -88,7 +90,6 @@ func decodeData(raw []byte) (interface{}, error) {
 }
 
 func logError(msg string, err error) {
-    log := log.New(os.Stderr, "", 0)
-    log.Println(msg)
-    log.Println(err.Error())
+    logger.Println(msg)
+    logger.Println(err.Error())
 }
