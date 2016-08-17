@@ -2,7 +2,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/cbroglie/mustache"
 	"github.com/docopt/docopt-go"
@@ -10,23 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 )
-
-type UnknownEncodingError struct {
-	msg         string
-	ChildErrors []error
-}
-
-func (e *UnknownEncodingError) Error() string {
-	message := e.msg
-
-	for _, err := range e.ChildErrors {
-		message += "\nChild Error: " + err.Error()
-	}
-
-	return message
-}
 
 func main() {
 	doc := `Mustache Cli
@@ -50,8 +33,10 @@ func main() {
 	arguments, _ := docopt.Parse(doc, nil, true, "Mustache 0.1", false)
 	dataPath := arguments["<data-file>"]
 	templatePath := arguments["<template-path>"].(string)
-	var err error
-	var data interface{}
+	var (
+        err error
+	    data interface{}
+    )
 
 	if dataPath == nil {
 		data, err = loadFromStdin()
@@ -74,25 +59,13 @@ func main() {
 }
 
 func loadFromFile(path string) (interface{}, error) {
-	var data interface{}
-	var err error
-
-	ext := filepath.Ext(path)
 	raw, readErr := ioutil.ReadFile(path)
 
 	if readErr != nil {
 		return nil, readErr
 	}
 
-	if ext == "yaml" || ext == "yml" {
-		data, err = loadYaml(raw)
-	} else if ext == "json" {
-		data, err = loadJson(raw)
-	} else {
-		data, err = loadUnknown(raw)
-	}
-
-	return data, err
+    return decodeData(raw)
 }
 
 func loadFromStdin() (interface{}, error) {
@@ -102,37 +75,12 @@ func loadFromStdin() (interface{}, error) {
 		return nil, readErr
 	}
 
-	return loadUnknown(raw)
+	return decodeData(raw)
 }
 
-func loadUnknown(raw []byte) (interface{}, error) {
-	var jsonErr error
-	var yamlErr error
-	var err error
-
-	data, jsonErr := loadJson(raw)
-
-	if jsonErr != nil {
-		data, yamlErr = loadYaml(raw)
-
-		if yamlErr != nil {
-			err = &UnknownEncodingError{msg: "Could not decode provided data.", ChildErrors: []error{jsonErr, yamlErr}}
-		}
-	}
-
-	return data, err
-}
-
-func loadYaml(raw []byte) (interface{}, error) {
+func decodeData(raw []byte) (interface{}, error) {
 	var data interface{}
 	err := yaml.Unmarshal(raw, &data)
-
-	return data, err
-}
-
-func loadJson(raw []byte) (interface{}, error) {
-	var data interface{}
-	err := json.Unmarshal(raw, &data)
 
 	return data, err
 }

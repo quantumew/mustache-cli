@@ -1,62 +1,48 @@
 package main
 
 import (
-    "testing"
-    "fmt"
+    . "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestFailedJson(t *testing.T) {
-    json := []byte("{\"key\": \"val\" \"otherKey\": \"noComma\"}")
-    _, err := loadJson(json)
-    expectedMsg := "invalid character '\"' after object key:value pair"
+var _ = Describe("Mustache unit tests", func() {
+    var successDecodeOutput map[string]interface{}
 
-    if err == nil || err.Error() != expectedMsg {
-        t.Errorf("got %s, want error", err)
-    }
-}
+    BeforeEach(func() {
+        successDecodeOutput = map[string]interface{}{"key":"val"}
+    })
 
-func ExampleLoadJson() {
-    json := []byte("{ \"key\": \"val\"}")
-    data, _ := loadJson(json)
-    fmt.Println(data)
-    // Output: map[key:val]
-}
+    Describe("Testing mustach functions", func() {
+        Context("Decode data with valid data", func() {
+            It("should decode JSON to a map", func() {
+                json := []byte("{ \"key\": \"val\"}")
+                data, _ := decodeData(json)
+                Expect(data).To(Equal(successDecodeOutput))
+            })
 
-func ExampleLoadJsonFailed() {
-    json := []byte("{\"key\": \"val\" \"otherKey\": \"noComma\"}")
-    _, err := loadJson(json)
-    fmt.Println(err)
-    // Output: invalid character '"' after object key:value pair
-}
+            It("Should decode YAML to a map", func() {
+                input := []byte("key: val")
+                data, _ := decodeData(input)
+                Expect(data).To(Equal(successDecodeOutput))
+            })
+        })
 
-func ExampleLoadUnknown() {
-    input := []byte("key: val")
-    data, _ := loadUnknown(input)
-    fmt.Println(data)
-    // Output: map[key:val]
-}
+        Context("Decoding data with invalid format", func() {
+            It("should fail to load malformatted JSON", func() {
+                json := []byte("{ \"key\": %val%\"}")
+                _, err := decodeData(json)
+                expectedErr := "error converting YAML to JSON: yaml: " +
+                    "[while scanning for the next token] found character that cannot start any token at line 1, column 10"
+                Expect(err.Error()).To(Equal(expectedErr))
+            })
 
-func ExampleLoadUnknownFailed() {
-    input := []byte("key: %val%")
-    _, err := loadUnknown(input)
-    fmt.Println(err)
-    // Output:
-    // Could not decode provided data.
-    // Child Error: invalid character 'k' looking for beginning of value
-    // Child Error: error converting YAML to JSON: yaml: [while scanning for the next token] found character that cannot start any token at line 1, column 6
-}
-
-func ExampleLoadYaml() {
-    yaml := []byte("key: val")
-    data, _ := loadYaml(yaml)
-    fmt.Println(data)
-    // Output: map[key:val]
-}
-
-func ExampleLoadYamlFailed() {
-    yaml := []byte("key\": \"%val%\"}")
-    _, err := loadYaml(yaml)
-    fmt.Println(err)
-    // Output:
-    // error converting YAML to JSON: yaml: [while parsing a block mapping] did not find expected key at line 1, column 14
-}
+            It("should error with invalid format", func() {
+                yaml := []byte("key\": \"%val%\"}")
+                _, err := decodeData(yaml)
+                expectedErr := "error converting YAML to JSON: yaml: " +
+                    "[while parsing a block mapping] did not find expected key at line 1, column 14"
+                Expect(err.Error()).To(Equal(expectedErr))
+            })
+        })
+    })
+})
