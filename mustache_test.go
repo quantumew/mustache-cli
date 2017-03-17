@@ -65,17 +65,13 @@ var _ = Describe("Mustache", func() {
             It("should fail to load malformatted JSON", func() {
                 json := []byte("{ \"key\": %val%\"}")
                 _, err := decodeData(json)
-                expectedErr := "error converting YAML to JSON: yaml: " +
-                    "[while scanning for the next token] found character that cannot start any token at line 1, column 10"
-                Expect(err.Error()).To(Equal(expectedErr))
+                Expect(err).NotTo(BeNil())
             })
 
             It("should error with invalid format", func() {
                 yaml := []byte("key\": \"%val%\"}")
                 _, err := decodeData(yaml)
-                expectedErr := "error converting YAML to JSON: yaml: " +
-                    "[while parsing a block mapping] did not find expected key at line 1, column 14"
-                Expect(err.Error()).To(Equal(expectedErr))
+                Expect(err).NotTo(BeNil())
             })
         })
     })
