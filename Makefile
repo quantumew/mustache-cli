@@ -4,7 +4,6 @@ SOURCE := mustache.go
 BINARY=mustache
 VERSION=0.2
 BUILD_TIME=`date +%FT%T%z`
-DEPS = $(go list -f '{{range .Imports}}{{.}} {{end}}' ./...)
 
 .DEFAULT_GOAL: $(BINARY)
 
@@ -14,7 +13,7 @@ $(BINARY): $(SOURCE)
 	strip mustache
 
 get-deps:
-	echo $(DEPS) | xargs -n1 go get -d
+	go get -d
 	go get -d "github.com/onsi/gomega"
 	go get -d "github.com/onsi/ginkgo"
 
