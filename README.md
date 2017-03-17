@@ -41,7 +41,8 @@ Build
 
 If you need a build not in releases, you can either request it or build it yourself. Here is how you build it.
 
-    git clone git@github.com:quantumew/mustache-cli.git
-    cd mustache-cli
+    go get github.com/quantumew/mustache-cli
+    cd "$GOPATH/src/github.com/quantumew/mustache-cli"
     make
+    mv mustache <in your path somewhere>
 
