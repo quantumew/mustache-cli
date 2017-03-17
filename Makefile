@@ -11,7 +11,12 @@ DEPS = $(go list -f '{{range .Imports}}{{.}} {{end}}' ./...)
 $(BINARY): $(SOURCE)
 	$(MAKE) get-deps
 	go build -o ${BINARY} ${SOURCE}
+ifeq ($(shell uname), Linux)
 	strip --strip-unneeded mustache
+endif
+ifeq ($(shell uname), Darwin)
+	strip -u -r -x mustache
+endif
 
 get-deps:
 	echo $(DEPS) | xargs -n1 go get -d
