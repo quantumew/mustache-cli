@@ -13,12 +13,13 @@ $(BINARY): $(SOURCE)
 	strip mustache
 
 get-deps:
-	go get -d
-	go get -d "github.com/onsi/gomega"
-	go get -d "github.com/onsi/ginkgo"
+	go mod vendor
 
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
 dist-clean:
 	rm -r mustache lib
+
+test:
+	go test

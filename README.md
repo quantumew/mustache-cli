@@ -1,5 +1,4 @@
-Mustache Cli
-============
+# Mustache Cli
 
 [![Build Status](https://travis-ci.org/quantumew/mustache-cli.svg?branch=master)](https://travis-ci.org/quantumew/mustache-cli)
 
@@ -11,27 +10,36 @@ See examples directory for a more in depth example of using JSON, YAML, and stdi
 
 [Build of latest release.](https://github.com/quantumew/mustache-cli/releases)
 
-Usage:
+## Usage
 
     mustache [<data-file>] <template-path>
     mustache <template-path>
 
-Options:
+## Examples
 
-    -h --help        - Show this message.
+    # Basic template usage
+    mustache data.json template.mustache
 
-Arguments:
-    <data-file>      - Path to data file.
+    # Pull variables from environment
+    mustache ENV template.mustache
 
-    <template-path>  - Path to template file.
+    # Pull variables from environment with overrides. This will merge starting with env vars.
+    # Think of order as priority.
+    mustache ENV template.mustache --override data.json --override data1.json
 
-Examples:
-
-    mustache data-source.json template.mustache
-
-    mustache data-source.yaml template.mustache
-
+    # get base data from stdin
     cat data-source.json | mustache template.mustache
+
+## Arguments
+
+    <data-file>      Path to data file. ENV is a special identifier to use environment variables.
+
+    <template-path>  Path to template file.
+
+# Options
+
+    -h --help            Show help message.
+    -o --override <file> Override data files. Overrides will be done in order.
 
 See also: [EXAMPLES](examples/README.md)
 
