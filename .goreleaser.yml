@@ -1,0 +1,25 @@
+# all available options: https://goreleaser.com/customization/
+project_name: mustache-cli
+
+builds:
+- binary: mustache
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - darwin
+  - windows
+  - linux
+  goarch:
+  - amd64
+  ldflags: []
+
+archive:
+  # https://github.com/articulate/terraform-provider-okta/issues/128#issuecomment-484565435
+  name_template: "{{.ProjectName}}-{{.Os}}-{{.Arch}}"
+  format_overrides:
+  - goos: windows
+    format: zip
+  - goos: darwin
+    format: zip
+  - goos: linux
+    format: zip

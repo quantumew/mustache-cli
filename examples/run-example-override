@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Example of running mustache with a JSON data source.
+# NOTE: This script is used as part of the mustache-cli unit tests.
+cd "${0%/*}"
+ENV_VAR=say OVERRIDE=ignoreme ../mustache.go data-source.json template-override.mustache --override data-source-override.json --override ENV
