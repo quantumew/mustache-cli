@@ -32,3 +32,5 @@ mustache
 
 # deps
 vendor
+
+.env
