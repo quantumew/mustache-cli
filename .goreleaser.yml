@@ -12,7 +12,10 @@ builds:
   goarch:
   - amd64
   - arm64
-  - armv6
+  - arm
+  goarm:
+  - 6
+  - 7
   ldflags: []
 
 archive:
