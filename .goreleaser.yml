@@ -11,6 +11,8 @@ builds:
   - linux
   goarch:
   - amd64
+  - arm64
+  - armv6
   ldflags: []
 
 archive:
