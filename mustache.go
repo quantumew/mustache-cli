@@ -80,7 +80,7 @@ func main() {
 	checkErr(err)
 	output, err := mustache.RenderFile(templatePath, context...)
 	checkErr(err)
-	fmt.Println(output)
+	fmt.Print(output)
 }
 
 func checkErr(err error) {
