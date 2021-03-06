@@ -1,6 +1,6 @@
 # Mustache Cli
 
-[![Build Status](https://travis-ci.org/quantumew/mustache-cli.svg?branch=master)](https://travis-ci.org/quantumew/mustache-cli)
+**DEPRECATED** [cbroglie/mustache](https://github.com/cbroglie/mustache), now has a CLI wrapper of its own.
 
 Command line interface to mustache template engine in Go.
 Basically a simple CLI wrapper for [cbroglie/mustache](https://github.com/cbroglie/mustache).
@@ -43,9 +43,7 @@ See examples directory for a more in depth example of using JSON, YAML, and stdi
 
 See also: [EXAMPLES](examples/README.md)
 
-
-Build
------
+## Build
 
 If you need a build not in releases, you can either request it or build it yourself. Here is how you build it.
 
@@ -53,4 +51,3 @@ If you need a build not in releases, you can either request it or build it yours
     cd "$GOPATH/src/github.com/quantumew/mustache-cli"
     make
     mv mustache <in your path somewhere>
-
